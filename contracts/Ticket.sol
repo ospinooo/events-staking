@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -19,9 +20,11 @@ contract Ticket is ERC721, Ownable {
     uint256 public price;
     uint256 public eventTime;
 
-    mapping(uint256 => int8) assisted; // 1,0,-1
+    mapping(uint256 => int8) assisted; // 1, 0, -1
     Counters.Counter private _assisted;
     Counters.Counter private _burnts;
+
+    bool private withdrawed = false;
 
     constructor(
         uint256 _maxSupply,
@@ -42,10 +45,12 @@ contract Ticket is ERC721, Ownable {
 
     function withdraw() public onlyOwner {
         require(block.timestamp > eventTime, "Too soon to withdraw tickets");
+        require(withdrawed == false, "Already did withdrawal");
         uint256 notAssistedTickets = _ticketIds.current().sub(
             _assisted.current()
         );
         payable(msg.sender).transfer(notAssistedTickets.mul(price));
+        withdrawed = true;
         emit WithdrawNonAssistants();
     }
 
@@ -66,6 +71,7 @@ contract Ticket is ERC721, Ownable {
 
     function burn(uint256 ticketId) external {
         require(assisted[ticketId] == 1, "Ticket didn't assist");
+        require(block.timestamp > eventTime, "Too soon to burn");
         require(
             _isApprovedOrOwner(_msgSender(), ticketId),
             "Caller is not token owner or approved"

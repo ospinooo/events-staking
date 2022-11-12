@@ -8,9 +8,17 @@ Try running some of the following tasks:
 npx hardhat help
 npx hardhat test
 REPORT_GAS=true npx hardhat test
+```
+
+Local development
+
+```
 npx hardhat node
 npx hardhat run scripts/deploy.ts
+npx hardhat console --network localhost
 ```
+
+Goerli
 
 # Use cases
 

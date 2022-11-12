@@ -4,7 +4,6 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 const ONE_GWEI = 1_000_000_000;
-const lockedAmount = ONE_GWEI;
 
 describe("Ticket", function () {
   // We define a fixture to reuse the same setup in every test.

@@ -11,3 +11,4 @@ artifacts
 
 .vscode
 package-lock.json
+secrets.json

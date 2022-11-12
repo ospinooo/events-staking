@@ -1,18 +1,24 @@
+import { time, loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { ethers } from "hardhat";
 
+const ONE_GWEI = 1_000_000_000;
+
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  const ONE_HOUR_IN_SECS = 60 * 60;
+  const eventTime = (await time.latest()) + ONE_HOUR_IN_SECS;
+  const eventPrice = ONE_GWEI;
+  const eventMaximumTickets = 10;
 
-  const lockedAmount = ethers.utils.parseEther("1");
+  const Ticket = await ethers.getContractFactory("Ticket");
+  const ticket = await Ticket.deploy(
+    eventMaximumTickets,
+    eventPrice,
+    eventTime
+  );
 
-  const Lock = await ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  await ticket.deployed();
 
-  await lock.deployed();
-
-  console.log(`Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`);
+  console.log(`Ticket deployed to ${ticket.address}`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
